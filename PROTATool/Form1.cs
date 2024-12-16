@@ -15,16 +15,13 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Octokit;
-using Octokit.Internal;
 using static PROTATool.GitUtils;
-
-// This is the code for your desktop app.
-// Press Ctrl+F5 (or go to Debug > Start Without Debugging) to run your app.
 
 namespace PROTATool
 {
     public partial class Form1 : Form
     {
+        Settings settings;
         public Form1()
         {
             InitializeComponent();
@@ -66,7 +63,7 @@ namespace PROTATool
             var regex = new Regex(@"https://github\.com/(?<owner>[^/]+)/(?<repo>[^/]+)/pull/(?<number>\d+)");
             var match = regex.Match(prLink);
 
-            GitUtils.GitHubToken = "";
+            GitUtils.GitHubToken = textBoxPassword.Text;
             if (match.Success)
             {
                 string owner = match.Groups["owner"].Value;
@@ -157,7 +154,7 @@ namespace PROTATool
         {
             Form1.setState("Sending OTA...");
             LogUtil.log("Starting OTA process...");
-            string ip = textBox2.Text;
+            string ip = textBoxIPs.Text;
             string prefix = "OpenBK7231T_";
             string ext = "rbl";
 
@@ -165,7 +162,7 @@ namespace PROTATool
 
             OBKDevice d = new OBKDevice();
             d.setAddress(ip);
-            OBKDevice.Root obk = await d.SendGetInternalJSONAsync("cm?cmnd=STATUS");
+            OBKDevice.Root obk = await d.GetStatusAsync();
 
             string hardware = "";
             hardware = obk.StatusFWR.Hardware;
@@ -272,6 +269,11 @@ namespace PROTATool
         static Form1 Singleton;
         private void Form1_Load(object sender, EventArgs e)
         {
+            settings = Settings.Load();
+            settings.BindTextBox(textBoxPassword, "ApiKey");
+            settings.BindTextBox(textBoxIPs, "Ips");
+            settings.BindTextBox(textBoxPR, "Url");
+
             Singleton = this;
             if (listView1.Columns.Count == 0)
             {

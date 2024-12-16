@@ -200,13 +200,17 @@ namespace PROTATool
             }
         }
 
-        public async Task<Root> SendGetInternalJSONAsync(string path)
+        public async Task<Root> GetStatusAsync()
+        {
+            return await SendGetInternalJSONAsync<Root>("cm?cmnd=STATUS");
+        }
+        public async Task<T> SendGetInternalJSONAsync<T>(string path)
         {
             byte[] responseBytes = await SendGetInternalAsync(path);
             string s = responseBytes != null ? Encoding.ASCII.GetString(responseBytes) : null;
-            var result = JsonSerializer.Deserialize<Root>(s);
-            return result;
+            return JsonSerializer.Deserialize<T>(s);
         }
+
         public async Task<string> SendGetInternalStringAsync(string path)
         {
             byte[] responseBytes = await SendGetInternalAsync(path);

@@ -32,12 +32,14 @@ namespace PROTATool
             this.label1 = new System.Windows.Forms.Label();
             this.textBoxPR = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.textBoxIPs = new System.Windows.Forms.TextBox();
             this.checkBoxFlashOnChange = new System.Windows.Forms.CheckBox();
             this.labelState = new System.Windows.Forms.Label();
             this.listView1 = new System.Windows.Forms.ListView();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.button1 = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.textBoxPassword = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // label1
@@ -67,13 +69,13 @@ namespace PROTATool
             this.label2.TabIndex = 6;
             this.label2.Text = "TG:";
             // 
-            // textBox2
+            // textBoxIPs
             // 
-            this.textBox2.Location = new System.Drawing.Point(45, 37);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(476, 20);
-            this.textBox2.TabIndex = 7;
-            this.textBox2.Text = "192.168.0.165";
+            this.textBoxIPs.Location = new System.Drawing.Point(45, 37);
+            this.textBoxIPs.Name = "textBoxIPs";
+            this.textBoxIPs.Size = new System.Drawing.Size(476, 20);
+            this.textBoxIPs.TabIndex = 7;
+            this.textBoxIPs.Text = "192.168.0.165";
             // 
             // checkBoxFlashOnChange
             // 
@@ -119,16 +121,36 @@ namespace PROTATool
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(12, 18);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(28, 13);
+            this.label3.TabIndex = 12;
+            this.label3.Text = "Key:";
+            // 
+            // textBoxPassword
+            // 
+            this.textBoxPassword.Location = new System.Drawing.Point(45, 11);
+            this.textBoxPassword.Name = "textBoxPassword";
+            this.textBoxPassword.Size = new System.Drawing.Size(476, 20);
+            this.textBoxPassword.TabIndex = 13;
+            this.textBoxPassword.Text = "??????????????";
+            this.textBoxPassword.UseSystemPasswordChar = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(533, 479);
+            this.Controls.Add(this.textBoxPassword);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.listView1);
             this.Controls.Add(this.labelState);
             this.Controls.Add(this.checkBoxFlashOnChange);
-            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.textBoxIPs);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.textBoxPR);
             this.Controls.Add(this.label1);
@@ -145,12 +167,14 @@ namespace PROTATool
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox textBoxPR;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox textBoxIPs;
         private System.Windows.Forms.CheckBox checkBoxFlashOnChange;
         private System.Windows.Forms.Label labelState;
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox textBoxPassword;
     }
 }
 
