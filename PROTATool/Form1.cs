@@ -121,7 +121,7 @@ namespace PROTATool
                             LogUtil.log("Commit has changed, fetching artifacts...");
                             CommitInfo c = await GitUtils.fetchCommitInfo(owner, repo,
                                 youngestSha, pullRequestNumber.ToString());
-                            await sendToDevice(c);
+                            await sendToDevices(c);
                             prevTopCommit = youngestSha;
                             LogUtil.log($"Artifacts sent for commit: {youngestSha}");
                         }
@@ -150,15 +150,31 @@ namespace PROTATool
             bBusy = false;
             LogUtil.log("Exiting refresh commits.");
         }
-        private async Task sendToDevice(CommitInfo c)
+        private async Task sendToDevices(CommitInfo c)
         {
-            Form1.setState("Sending OTA...");
-            LogUtil.log("Starting OTA process...");
-            string ip = textBoxIPs.Text;
+            string[] ips = textBoxIPs.Text.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries );
+            LogUtil.log("Found " + ips.Length + " devices...");
+            for (int i = 0; i < ips.Length; i++)
+            {
+                string ip = ips[i];
+                try
+                {
+                    await sendToDevice(c, ip);
+                    LogUtil.log("Sending to " + ip + " success!");
+                }
+                catch(Exception ex)
+                {
+                    LogUtil.log("Sending to " + ip + " failed with " + ex.ToString()+"!");
+                }
+            }
+
+        }
+        private async Task sendToDevice(CommitInfo c, string ip)
+        {
+            Form1.setState("Sending OTA to " + ip + "...");
+            LogUtil.log("Starting OTA  " + ip + "process...");
             string prefix = "OpenBK7231T_";
             string ext = "rbl";
-
-
 
             OBKDevice d = new OBKDevice();
             d.setAddress(ip);
@@ -308,6 +324,11 @@ namespace PROTATool
         private void button1_Click_1(object sender, EventArgs e)
         {
             LogUtil.OpenLog();
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

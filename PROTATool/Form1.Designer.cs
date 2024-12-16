@@ -45,17 +45,18 @@ namespace PROTATool
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(14, 66);
+            this.label1.Location = new System.Drawing.Point(14, 103);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(25, 13);
+            this.label1.Size = new System.Drawing.Size(141, 13);
             this.label1.TabIndex = 4;
-            this.label1.Text = "PR:";
+            this.label1.Text = "Pull request link from Github:";
+            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // textBoxPR
             // 
-            this.textBoxPR.Location = new System.Drawing.Point(45, 63);
+            this.textBoxPR.Location = new System.Drawing.Point(17, 119);
             this.textBoxPR.Name = "textBoxPR";
-            this.textBoxPR.Size = new System.Drawing.Size(476, 20);
+            this.textBoxPR.Size = new System.Drawing.Size(504, 20);
             this.textBoxPR.TabIndex = 5;
             this.textBoxPR.Text = "https://github.com/openshwprojects/OpenBK7231T_App/pull/1464";
             this.textBoxPR.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
@@ -63,24 +64,24 @@ namespace PROTATool
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 40);
+            this.label2.Location = new System.Drawing.Point(14, 58);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(25, 13);
+            this.label2.Size = new System.Drawing.Size(176, 13);
             this.label2.TabIndex = 6;
-            this.label2.Text = "TG:";
+            this.label2.Text = "Target device IPs; use ; to separate";
             // 
             // textBoxIPs
             // 
-            this.textBoxIPs.Location = new System.Drawing.Point(45, 37);
+            this.textBoxIPs.Location = new System.Drawing.Point(17, 74);
             this.textBoxIPs.Name = "textBoxIPs";
-            this.textBoxIPs.Size = new System.Drawing.Size(476, 20);
+            this.textBoxIPs.Size = new System.Drawing.Size(504, 20);
             this.textBoxIPs.TabIndex = 7;
             this.textBoxIPs.Text = "192.168.0.165";
             // 
             // checkBoxFlashOnChange
             // 
             this.checkBoxFlashOnChange.AutoSize = true;
-            this.checkBoxFlashOnChange.Location = new System.Drawing.Point(363, 265);
+            this.checkBoxFlashOnChange.Location = new System.Drawing.Point(363, 315);
             this.checkBoxFlashOnChange.Name = "checkBoxFlashOnChange";
             this.checkBoxFlashOnChange.Size = new System.Drawing.Size(158, 17);
             this.checkBoxFlashOnChange.TabIndex = 8;
@@ -91,7 +92,7 @@ namespace PROTATool
             // labelState
             // 
             this.labelState.AutoSize = true;
-            this.labelState.Location = new System.Drawing.Point(14, 99);
+            this.labelState.Location = new System.Drawing.Point(14, 171);
             this.labelState.Name = "labelState";
             this.labelState.Size = new System.Drawing.Size(32, 13);
             this.labelState.TabIndex = 9;
@@ -100,9 +101,9 @@ namespace PROTATool
             // listView1
             // 
             this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(17, 115);
+            this.listView1.Location = new System.Drawing.Point(17, 187);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(504, 144);
+            this.listView1.Size = new System.Drawing.Size(504, 122);
             this.listView1.TabIndex = 10;
             this.listView1.UseCompatibleStateImageBehavior = false;
             // 
@@ -124,17 +125,17 @@ namespace PROTATool
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 18);
+            this.label3.Location = new System.Drawing.Point(18, 18);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(28, 13);
+            this.label3.Size = new System.Drawing.Size(81, 13);
             this.label3.TabIndex = 12;
-            this.label3.Text = "Key:";
+            this.label3.Text = "Github API key:";
             // 
             // textBoxPassword
             // 
-            this.textBoxPassword.Location = new System.Drawing.Point(45, 11);
+            this.textBoxPassword.Location = new System.Drawing.Point(17, 34);
             this.textBoxPassword.Name = "textBoxPassword";
-            this.textBoxPassword.Size = new System.Drawing.Size(476, 20);
+            this.textBoxPassword.Size = new System.Drawing.Size(504, 20);
             this.textBoxPassword.TabIndex = 13;
             this.textBoxPassword.Text = "??????????????";
             this.textBoxPassword.UseSystemPasswordChar = true;
