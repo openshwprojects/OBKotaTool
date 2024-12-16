@@ -38,7 +38,6 @@ namespace PROTATool
             this.listView1 = new System.Windows.Forms.ListView();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.button1 = new System.Windows.Forms.Button();
-            this.comboBoxPlatform = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // label1
@@ -72,7 +71,7 @@ namespace PROTATool
             // 
             this.textBox2.Location = new System.Drawing.Point(45, 37);
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(344, 20);
+            this.textBox2.Size = new System.Drawing.Size(476, 20);
             this.textBox2.TabIndex = 7;
             this.textBox2.Text = "192.168.0.165";
             // 
@@ -120,20 +119,11 @@ namespace PROTATool
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
-            // comboBoxPlatform
-            // 
-            this.comboBoxPlatform.FormattingEnabled = true;
-            this.comboBoxPlatform.Location = new System.Drawing.Point(395, 36);
-            this.comboBoxPlatform.Name = "comboBoxPlatform";
-            this.comboBoxPlatform.Size = new System.Drawing.Size(126, 21);
-            this.comboBoxPlatform.TabIndex = 12;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(533, 479);
-            this.Controls.Add(this.comboBoxPlatform);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.listView1);
             this.Controls.Add(this.labelState);
@@ -161,7 +151,6 @@ namespace PROTATool
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.ComboBox comboBoxPlatform;
     }
 }
 

@@ -66,7 +66,7 @@ namespace PROTATool
             var regex = new Regex(@"https://github\.com/(?<owner>[^/]+)/(?<repo>[^/]+)/pull/(?<number>\d+)");
             var match = regex.Match(prLink);
 
-            GitUtils.GitHubToken = "sads";
+            GitUtils.GitHubToken = "";
             if (match.Success)
             {
                 string owner = match.Groups["owner"].Value;
@@ -162,7 +162,21 @@ namespace PROTATool
             string ext = "rbl";
 
 
-            var p = Platforms.list[comboBoxPlatform.SelectedIndex];
+
+            OBKDevice d = new OBKDevice();
+            d.setAddress(ip);
+            OBKDevice.Root obk = await d.SendGetInternalJSONAsync("cm?cmnd=STATUS");
+
+            string hardware = "";
+            hardware = obk.StatusFWR.Hardware;
+
+
+            var p = Platforms.findForChip(hardware);
+            if(p == null)
+            {
+                MessageBox.Show("Unknown platform " + hardware);
+                return;
+            }
             ext = p.extension;
             prefix = p.name;
             LogUtil.log($"Chosen prefix: {prefix}");
@@ -187,34 +201,6 @@ namespace PROTATool
                         fileEntry.Open().CopyTo(ms);
                         fileData = ms.ToArray();
                     }
-
-                    string hardware = "";
-                    if(false)
-                    {
-                        string statusURL = $"http://{ip}/cm?cmnd=STATUS";
-                        LogUtil.log($"Sending GET request to {statusURL}");
-                        try
-                        {
-                            WebRequest request = WebRequest.Create(statusURL);
-                            request.Method = "GET";
-
-                            using (WebResponse response = await request.GetResponseAsync())
-                            {
-                                using (StreamReader reader = new StreamReader(response.GetResponseStream()))
-                                {
-                                    string statusContent = await reader.ReadToEndAsync();
-                                    var statusJson = JsonSerializer.Deserialize<JsonElement>(statusContent);
-
-                                    // extract HARDWARE field
-                                    hardware = statusJson.GetProperty("StatusFWR").GetProperty("Hardware").GetString();
-                                    LogUtil.log($"Device Hardware: {hardware}");
-                                }
-                            }
-                        }
-                        catch { }
-                    }
-
-
 
                     // send data via POST to otaURL
                     string otaURL = $"http://{ip}/api/ota";
@@ -297,11 +283,6 @@ namespace PROTATool
                 listView1.FullRowSelect = true;
                 listView1.GridLines = true;
             }
-            for(int i = 0; i< Platforms.list.Length; i++)
-            {
-                comboBoxPlatform.Items.Add(Platforms.list[i].name);
-            }
-            comboBoxPlatform.SelectedIndex = 1;
         }
 
         private void checkBoxFlashOnChange_CheckedChanged(object sender, EventArgs e)

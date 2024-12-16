@@ -99,6 +99,7 @@
     </Compile>
     <Compile Include="GitUtils.cs" />
     <Compile Include="LogUtil.cs" />
+    <Compile Include="OBKDevice.cs" />
     <Compile Include="Platforms.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

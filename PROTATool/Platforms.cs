@@ -40,5 +40,17 @@ namespace PROTATool
             new Platform { name = "OpenW800", extension = ".img" }
             };
         }
+
+        internal static Platform findForChip(string hardware)
+        {
+            for(int i = 0; i < list.Length; i++)
+            {
+                if (list[i].name.ToLower().Contains(hardware.ToLower()))
+                {
+                    return list[i];
+                }
+            }
+            return null;
+        }
     }
 }
