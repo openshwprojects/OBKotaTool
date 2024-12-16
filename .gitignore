@@ -1,0 +1,64 @@
+# Build results
+bin/
+obj/
+Debug/
+Release/
+*.exe
+*.bak
+*.dll
+*.pdb
+*.cache
+*.ilk
+*.log
+*.userosscache
+*.suo
+*.unsuccessfulbuild
+*.vspscc
+*.vssscc
+
+# Visual Studio workspace and configuration
+.vs/
+.vscode/
+
+# User-specific files
+*.user
+*.userprefs
+
+# Generated files
+*.g.i.cs
+*.g.cs
+Generated_Code/
+
+# Package files
+*.nupkg
+*.snupkg
+packages/
+package-lock.json
+project.lock.json
+*.nuget.props
+*.nuget.targets
+
+# Auto-generated folders and files
+_TestResults/
+*.testresults
+*.publish.xml
+
+# Resharper files
+_ReSharper*/
+*.DotSettings.user
+
+# Rider files
+.idea/
+*.sln.iml
+
+# Windows image thumbnails
+Thumbs.db
+
+# Build logs
+*.log
+*.tlog
+*.lastcodeanalysissucceeded
+
+# Other temporary files
+*.tmp
+*.temp
