@@ -47,39 +47,39 @@ jobs:
   release:
     needs: build
     runs-on: windows-latest
-
+  
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
+  
       - name: Download Build Artifacts
         uses: actions/download-artifact@v4
         with:
           name: PROTATool
-
-      - name: Debug Download Artifacts
+  
+      - name: Debug Artifact Content
         run: |
-          echo "Verifying downloaded artifacts..."
-          dir .
-
+          echo "Checking downloaded artifact content:"
+          dir -Recurse
+  
       - name: Recreate Directory Structure
         run: |
           echo "Recreating directory for release packaging..."
           mkdir -p BuildOutput/Release
-          move PROTATool/bin/Release/*.exe BuildOutput/Release/ # Highlighted: Matches artifact paths
-          move PROTATool/bin/Release/*.dll BuildOutput/Release/
-          move PROTATool/bin/Release/*.pdb BuildOutput/Release/
-
+          move *.exe BuildOutput/Release/ # Highlighted: Adjusted to work with downloaded files
+          move *.dll BuildOutput/Release/
+          move *.pdb BuildOutput/Release/
+  
       - name: Debug Recreated Directory
         run: |
           echo "Verifying files in BuildOutput/Release directory..."
           dir BuildOutput/Release
-
+  
       - name: Create ZIP File
         run: |
           mkdir release
           powershell Compress-Archive -Path \"BuildOutput/Release/*\" -DestinationPath \"release/PROTATool-v${{ github.run_number }}.zip\"
-
+  
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -91,3 +91,4 @@ jobs:
           draft: false
           prerelease: false
           files: release/PROTATool-v${{ github.run_number }}.zip
+
