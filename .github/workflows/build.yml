@@ -37,7 +37,7 @@ jobs:
 
       - name: Debug Build Output Directory
         run: |
-          echo "Checking contents of BuildOutput/Release:"
+          echo "Contents of BuildOutput/Release:"
           dir BuildOutput/Release
 
       - name: Upload Build Artifacts
@@ -56,6 +56,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: List Available Artifacts
+        run: |
+          echo "Checking available artifacts in this run:"
+          dir .
 
       - name: Download Build Artifacts
         uses: actions/download-artifact@v4
