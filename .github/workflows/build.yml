@@ -1,4 +1,4 @@
-name: Build and release PROTATool
+name: Build and release PROTA Tool
 
 on:
   push:
@@ -63,7 +63,7 @@ jobs:
       - name: Download Build Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: PROTATool
+          name: PROTA Tool
 
       - name: Recreate Directory Structure
         run: |
@@ -86,10 +86,10 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ github.run_number }}
-          name: PROTATool v${{ github.run_number }}
+          name: PROTA Tool v${{ github.run_number }}
           body: |
             Automated release for PROTATool.
             Includes the latest .exe and .dll files.
           draft: false
           prerelease: false
-          files: release/PROTATool-v${{ github.run_number }}.zip
+          files: release/PROTA Tool-v${{ github.run_number }}.zip
