@@ -32,14 +32,14 @@ jobs:
       - name: Debug Build Output
         run: |
           echo "Verifying output in bin/Release directory..."
-          dir PROTATool/bin/Release # Highlighted: Ensure exact directory location
+          dir PROTATool/bin/Release
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: PROTATool
           path: |
-            PROTATool/bin/Release/*.exe # Highlighted: Matches confirmed build output
+            PROTATool/bin/Release/*.exe
             PROTATool/bin/Release/*.dll
             PROTATool/bin/Release/*.pdb
           if-no-files-found: error
@@ -57,9 +57,9 @@ jobs:
         with:
           name: PROTATool
 
-      - name: Debug Artifact Content
+      - name: Debug Downloaded Files
         run: |
-          echo "Checking downloaded artifact content:"
+          echo "Verifying downloaded files:"
           dir -Recurse
 
       - name: Recreate Directory Structure
@@ -70,14 +70,13 @@ jobs:
           move *.dll BuildOutput/Release/
           move *.pdb BuildOutput/Release/
 
-      - name: Debug Archive Files
+      - name: Debug Recreated Directory
         run: |
-          echo "Verifying files in BuildOutput/Release:"
+          echo "Verifying files in BuildOutput/Release directory..."
           dir BuildOutput/Release
 
       - name: Create ZIP File
         run: |
-          echo "Creating archive..."
           mkdir -p release
           powershell Compress-Archive -Path \"BuildOutput\\Release\\*\" -DestinationPath \"release\\PROTATool-v${{ github.run_number }}.zip\"
 
@@ -92,4 +91,3 @@ jobs:
           draft: false
           prerelease: false
           files: release/PROTATool-v${{ github.run_number }}.zip
-
