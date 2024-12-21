@@ -30,23 +30,21 @@ jobs:
         run: dir PROTATool/packages
 
       - name: Build the project
-        run: msbuild PROTATool/PROTATool.csproj /p:Configuration=Release /p:OutDir=BuildOutput\Release\
+        run: msbuild PROTATool/PROTATool.csproj /p:Configuration=Release
 
       - name: Debug Build Output
         run: |
           echo "Checking OutputPath directories..."
-          echo "Contents of bin/Release:"
+          echo "Contents of bin/Release:"  # Highlighted: Matches .csproj output path
           dir bin/Release
-          echo "Contents of BuildOutput/Release:"
-          dir BuildOutput/Release
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: PROTATool
           path: |
-            BuildOutput/Release/*.exe
-            BuildOutput/Release/*.dll
+            bin/Release/*.exe  # Highlighted: Updated to match .csproj OutputPath
+            bin/Release/*.dll
           if-no-files-found: error
 
   release:
@@ -76,8 +74,8 @@ jobs:
         run: |
           echo "Recreating BuildOutput directory..."
           mkdir -p BuildOutput/Release
-          move *.exe BuildOutput/Release/
-          move *.dll BuildOutput/Release/
+          move bin/Release/*.exe BuildOutput/Release/  # Highlighted: Matches .csproj output path
+          move bin/Release/*.dll BuildOutput/Release/
 
       - name: Debug Downloaded Artifacts
         run: |
