@@ -33,7 +33,7 @@ jobs:
         run: mkdir -p BuildOutput/Release
 
       - name: Build the project
-        run: msbuild PROTATool/PROTATool.csproj /p:Configuration=Release /p:OutDir=BuildOutput\Release\
+        run: msbuild PROTATool/PROTATool.csproj /p:Configuration=Release /p:OutDir=BuildOutput\\Release\\
 
       - name: Debug Build Output Directory
         run: |
@@ -47,7 +47,7 @@ jobs:
           path: |
             BuildOutput/Release/*.exe
             BuildOutput/Release/*.dll
-          if-no-files-found: warn
+          if-no-files-found: error
 
   release:
     needs: build
@@ -59,7 +59,7 @@ jobs:
 
       - name: List Available Artifacts
         run: |
-          echo "Checking available artifacts in this run:"
+          echo "Available artifacts in this run:"
           dir .
 
       - name: Download Build Artifacts
@@ -87,7 +87,7 @@ jobs:
       - name: Create ZIP File
         run: |
           mkdir release
-          powershell Compress-Archive -Path "BuildOutput/Release/*" -DestinationPath "release/PROTATool-v${{ github.run_number }}.zip"
+          powershell Compress-Archive -Path \"BuildOutput/Release/*\" -DestinationPath \"release/PROTATool-v${{ github.run_number }}.zip\"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
