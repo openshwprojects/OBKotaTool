@@ -47,21 +47,21 @@ jobs:
   release:
     needs: build
     runs-on: windows-latest
-
+  
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
+  
       - name: Download Build Artifacts
         uses: actions/download-artifact@v4
         with:
           name: PROTATool
-
+  
       - name: Debug Downloaded Files
         run: |
-          echo "Verifying downloaded files:"
+          echo "Verifying downloaded files and directory structure:"
           dir -Recurse
-
+  
       - name: Recreate Directory Structure
         run: |
           echo "Recreating directory for release packaging..."
@@ -69,22 +69,23 @@ jobs:
           move *.exe BuildOutput/Release/
           move *.dll BuildOutput/Release/
           move *.pdb BuildOutput/Release/
-
-      - name: Debug Recreated Directory
+  
+      - name: Debug Files in BuildOutput/Release
         run: |
-          echo "Verifying files in BuildOutput/Release directory..."
+          echo "Verifying files in BuildOutput/Release:"
           dir BuildOutput/Release
-
+  
       - name: Create ZIP File
         run: |
+          echo "Creating archive..."
           mkdir -p release
-          powershell Compress-Archive -Path \"BuildOutput\\Release\\*\" -DestinationPath \"release\\PROTATool-v${{ github.run_number }}.zip\"
-
+          powershell Compress-Archive -Path "BuildOutput\\Release\\*" -DestinationPath "release\\PROTATool-v${{ github.run_number }}.zip"
+  
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ github.run_number }}
-          name: PROTA Tool v${{ github.run_number }}
+          name: PROTATool v${{ github.run_number }}
           body: |
             Automated release for PROTATool.
             Includes the latest .exe, .dll, and .pdb files.
