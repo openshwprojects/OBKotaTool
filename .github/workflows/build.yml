@@ -68,6 +68,11 @@ jobs:
         with:
           name: PROTATool
 
+      - name: Debug Download Artifacts
+        run: |
+          echo "Downloaded artifacts:"
+          dir .
+
       - name: Recreate Directory Structure
         run: |
           echo "Recreating BuildOutput directory..."
