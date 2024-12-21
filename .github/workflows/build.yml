@@ -35,11 +35,10 @@ jobs:
       - name: Build the project
         run: msbuild PROTATool/PROTATool.csproj /p:Configuration=Release /p:OutDir=BuildOutput\Release\
 
-      - name: Debug Build Output
+      - name: Debug Build Output Directory
         run: |
-          echo "Checking output directory..."
-          dir BuildOutput
-          dir BuildOutput\Release
+          echo "Checking contents of BuildOutput/Release:"
+          dir BuildOutput/Release
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
@@ -49,11 +48,6 @@ jobs:
             BuildOutput/Release/*.exe
             BuildOutput/Release/*.dll
           if-no-files-found: warn
-
-      - name: Debug Build Output Directory
-        run: |
-          echo "Contents of BuildOutput/Release:"
-          dir BuildOutput/Release
 
   release:
     needs: build
