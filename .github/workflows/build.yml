@@ -1,3 +1,49 @@
+### .csproj Observations
+The `.csproj` file defines the structure of the project, including references, build configurations, and dependencies. Based on the build log, several issues require attention:
+
+1. **Framework Targeting**:
+   - Ensure the target framework in `.csproj` is compatible with all NuGet packages and assemblies (e.g., `.NETFramework v4.8`).
+
+2. **Dependencies**:
+   - Update the `.csproj` file to explicitly include:
+     - `Microsoft.Bcl.AsyncInterfaces` version `9.0.0`
+     - `Octokit` version `13.0.1`
+     - `System.IO.Compression` version `4.1.2`
+   - Use the exact versions required to avoid compatibility issues.
+
+3. **Output Configuration**:
+   - Verify the `OutDir` is set to `BuildOutput\Release\` in `.csproj` to match the `build.yml`.
+
+### Updated build.yml
+The `build.yml` file outlines the build and release process in GitHub Actions.
+
+#### Issues or Potential Improvements
+1. **NuGet Package Restoration**:
+   - Update NuGet restore to include validation:
+     ```yaml
+     - name: Validate NuGet Packages
+       run: dir PROTATool/packages
+     ```
+
+2. **Output Directory**:
+   - Ensure the `Create Output Directory` step aligns with `.csproj` settings (e.g., `OutDir=BuildOutput\Release\`).
+
+3. **Artifact Upload**:
+   - Adjust paths in the `Upload Build Artifacts` step to avoid mismatches:
+     ```yaml
+     path:
+       BuildOutput/Release/*.exe
+       BuildOutput/Release/*.dll
+     ```
+
+4. **Release Creation**:
+   - Validate paths in `Compress-Archive` to match the output directory.
+
+5. **MSBuild Configuration**:
+   - Ensure `/p:Configuration=Release` and `OutDir` are consistent with `.csproj`.
+
+#### Suggested Updates to build.yml
+```yaml
 name: Build and release PROTA Tool
 
 on:
@@ -24,7 +70,10 @@ jobs:
         uses: NuGet/setup-nuget@v2
 
       - name: Restore NuGet packages
-        run: nuget restore PROTATool/PROTATool.csproj -SolutionDirectory .
+        run: nuget restore PROTATool/PROTATool.csproj
+
+      - name: Validate NuGet Packages
+        run: dir PROTATool/packages
 
       - name: Create Output Directory
         run: mkdir -p BuildOutput/Release
@@ -43,14 +92,14 @@ jobs:
         with:
           name: PROTATool
           path: |
-            PROTATool/BuildOutput/Release/*.exe
-            PROTATool/BuildOutput/Release/*.dll
+            BuildOutput/Release/*.exe
+            BuildOutput/Release/*.dll
           if-no-files-found: warn
 
       - name: Debug Build Output Directory
         run: |
           echo "Contents of BuildOutput/Release:"
-          dir PROTATool/BuildOutput/Release
+          dir BuildOutput/Release
 
   release:
     needs: build
@@ -63,7 +112,7 @@ jobs:
       - name: Download Build Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: PROTA Tool
+          name: PROTATool
 
       - name: Recreate Directory Structure
         run: |
@@ -92,4 +141,5 @@ jobs:
             Includes the latest .exe and .dll files.
           draft: false
           prerelease: false
-          files: release/PROTA Tool-v${{ github.run_number }}.zip
+          files: release/PROTATool-v${{ github.run_number }}.zip
+```
