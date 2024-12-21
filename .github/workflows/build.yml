@@ -26,25 +26,22 @@ jobs:
       - name: Restore NuGet packages
         run: nuget restore PROTATool/PROTATool.csproj -SolutionDirectory PROTATool
 
-      - name: Validate NuGet Packages
-        run: dir PROTATool/packages
-
       - name: Build the project
         run: msbuild PROTATool/PROTATool.csproj /p:Configuration=Release
 
       - name: Debug Build Output
         run: |
-          echo "Checking OutputPath directories..."
-          echo "Contents of bin/Release:"  # Highlighted: Matches .csproj output path
-          dir bin/Release
+          echo "Verifying output in bin/Release directory..."
+          dir PROTATool/bin/Release # Highlighted: Ensure exact directory location
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: PROTATool
           path: |
-            bin/Release/*.exe  # Highlighted: Updated to match .csproj OutputPath
-            bin/Release/*.dll
+            PROTATool/bin/Release/*.exe # Highlighted: Matches confirmed build output
+            PROTATool/bin/Release/*.dll
+            PROTATool/bin/Release/*.pdb
           if-no-files-found: error
 
   release:
@@ -55,11 +52,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: List Available Artifacts
-        run: |
-          echo "Available artifacts in this run:"
-          dir .
-
       - name: Download Build Artifacts
         uses: actions/download-artifact@v4
         with:
@@ -67,25 +59,26 @@ jobs:
 
       - name: Debug Download Artifacts
         run: |
-          echo "Downloaded artifacts:"
+          echo "Verifying downloaded artifacts..."
           dir .
 
       - name: Recreate Directory Structure
         run: |
-          echo "Recreating BuildOutput directory..."
+          echo "Recreating directory for release packaging..."
           mkdir -p BuildOutput/Release
-          move bin/Release/*.exe BuildOutput/Release/  # Highlighted: Matches .csproj output path
-          move bin/Release/*.dll BuildOutput/Release/
+          move PROTATool/bin/Release/*.exe BuildOutput/Release/ # Highlighted: Matches artifact paths
+          move PROTATool/bin/Release/*.dll BuildOutput/Release/
+          move PROTATool/bin/Release/*.pdb BuildOutput/Release/
 
-      - name: Debug Downloaded Artifacts
+      - name: Debug Recreated Directory
         run: |
-          echo "Downloaded artifacts in BuildOutput/Release:"
+          echo "Verifying files in BuildOutput/Release directory..."
           dir BuildOutput/Release
 
       - name: Create ZIP File
         run: |
           mkdir release
-          powershell Compress-Archive -Path "BuildOutput/Release/*" -DestinationPath "release/PROTATool-v${{ github.run_number }}.zip"
+          powershell Compress-Archive -Path \"BuildOutput/Release/*\" -DestinationPath \"release/PROTATool-v${{ github.run_number }}.zip\"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -94,7 +87,7 @@ jobs:
           name: PROTA Tool v${{ github.run_number }}
           body: |
             Automated release for PROTATool.
-            Includes the latest .exe and .dll files.
+            Includes the latest .exe, .dll, and .pdb files.
           draft: false
           prerelease: false
           files: release/PROTATool-v${{ github.run_number }}.zip
