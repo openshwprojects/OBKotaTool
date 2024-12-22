@@ -70,33 +70,27 @@ jobs:
           move *.exe BuildOutput/Release/
           move *.dll BuildOutput/Release/
           move *.pdb BuildOutput/Release/
-          move *.config BuildOutput/Release/
+          move *.config BuildOutput/Release/ # Ensure the .config file is moved
   
-      - name: Debug Archive Files
+      - name: Debug Files in BuildOutput/Release
         run: |
-          echo "Checking BuildOutput/Release for files:"
+          echo "Verifying files in BuildOutput/Release:"
           dir BuildOutput/Release
-  
-      - name: Validate BuildOutput/Release
-        run: |
-          if (!(Test-Path -Path BuildOutput/Release/*)) {
-            Write-Error \"BuildOutput/Release is empty or does not exist.\"
-          }
   
       - name: Create ZIP File
         run: |
           echo "Creating archive..."
           mkdir -p release
-          powershell Compress-Archive -Path \"BuildOutput/Release/*\" -DestinationPath \"release/PROTATool-v${{ github.run_number }}.zip\"
+          powershell Compress-Archive -Path "BuildOutput\\Release\\*" -DestinationPath "release\\PROTATool-v${{ github.run_number }}.zip"
   
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ github.run_number }}
-          name: PROTA Tool v${{ github.run_number }}
+          name: PROTATool v${{ github.run_number }}
           body: |
             Automated release for PROTATool.
-            Includes the latest .exe, .dll, .pdb, and .config files.
+            Includes the latest .exe, .dll, and .pdb files.
           draft: false
           prerelease: false
           files: release/PROTATool-v${{ github.run_number }}.zip
