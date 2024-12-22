@@ -1,4 +1,4 @@
-name: Build PROTATool
+name: Build and release PROTA Tool
 
 on:
   push:
@@ -7,6 +7,7 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   build:
@@ -16,17 +17,78 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup MSBuild
+      - name: Set up MSBuild
         uses: microsoft/setup-msbuild@v1
 
+      - name: Install NuGet
+        uses: NuGet/setup-nuget@v2
+
       - name: Restore NuGet packages
-        run: nuget restore PROTATool/PROTATool.sln
+        run: nuget restore PROTATool/PROTATool.csproj -SolutionDirectory PROTATool
 
-      - name: Build solution
-        run: msbuild PROTATool/PROTATool.sln /p:Configuration=Release
+      - name: Build the project
+        run: msbuild PROTATool/PROTATool.csproj /p:Configuration=Release
 
-      - name: Upload Build Artifact
+      - name: Debug Build Output
+        run: |
+          echo "Verifying output in bin/Release directory..."
+          dir PROTATool/bin/Release
+
+      - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: PROTATool-Release
-          path: PROTATool/bin/Release
+          name: PROTATool
+          path: |
+            PROTATool/bin/Release/*.exe
+            PROTATool/bin/Release/*.dll
+            PROTATool/bin/Release/*.pdb
+          if-no-files-found: error
+
+  release:
+    needs: build
+    runs-on: windows-latest
+  
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+  
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: PROTATool
+  
+      - name: Debug Downloaded Files
+        run: |
+          echo "Verifying downloaded files and directory structure:"
+          dir -Recurse
+  
+      - name: Recreate Directory Structure
+        run: |
+          echo "Recreating directory for release packaging..."
+          mkdir -p BuildOutput/Release
+          move *.exe BuildOutput/Release/
+          move *.dll BuildOutput/Release/
+          move *.pdb BuildOutput/Release/
+  
+      - name: Debug Files in BuildOutput/Release
+        run: |
+          echo "Verifying files in BuildOutput/Release:"
+          dir BuildOutput/Release
+  
+      - name: Create ZIP File
+        run: |
+          echo "Creating archive..."
+          mkdir -p release
+          powershell Compress-Archive -Path "BuildOutput\\Release\\*" -DestinationPath "release\\PROTATool-v${{ github.run_number }}.zip"
+  
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.run_number }}
+          name: PROTATool v${{ github.run_number }}
+          body: |
+            Automated release for PROTATool.
+            Includes the latest .exe, .dll, and .pdb files.
+          draft: false
+          prerelease: false
+          files: release/PROTATool-v${{ github.run_number }}.zip
