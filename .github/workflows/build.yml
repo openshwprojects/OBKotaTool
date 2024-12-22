@@ -42,6 +42,7 @@ jobs:
             PROTATool/bin/Release/*.exe
             PROTATool/bin/Release/*.dll
             PROTATool/bin/Release/*.pdb
+            PROTATool/bin/Release/PROTATool.exe.config # Include the .config file
           if-no-files-found: error
 
   release:
@@ -69,6 +70,7 @@ jobs:
           move *.exe BuildOutput/Release/
           move *.dll BuildOutput/Release/
           move *.pdb BuildOutput/Release/
+          move *.config BuildOutput/Release/ # Ensure the .config file is moved
   
       - name: Debug Files in BuildOutput/Release
         run: |
