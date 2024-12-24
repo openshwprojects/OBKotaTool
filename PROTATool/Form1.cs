@@ -19,10 +19,10 @@ using static PROTATool.GitUtils;
 
 namespace PROTATool
 {
-    public partial class Form1 : Form
+    public partial class PROTATool : Form
     {
         Settings settings;
-        public Form1()
+        public PROTATool()
         {
             InitializeComponent();
         }
@@ -55,7 +55,7 @@ namespace PROTATool
         }
         private async void RefreshCommits()
         {
-            Form1.setState("Entering...");
+            PROTATool.setState("Entering...");
             LogUtil.log("Entering refresh commits");
             string prLink = textBoxPR.Text;
 
@@ -72,7 +72,7 @@ namespace PROTATool
 
                 try
                 {
-                    Form1.setState("Getting commits...");
+                    PROTATool.setState("Getting commits...");
                     LogUtil.log($"Fetching commits for PR: {owner}/{repo}/pull/{pullRequestNumber}");
 
                     var client = new GitHubClient(new Octokit.ProductHeaderValue("PROTATool"));
@@ -117,7 +117,7 @@ namespace PROTATool
                         string youngestSha = youngestCommit.Sha;
                         if (prevTopCommit != youngestSha)
                         {
-                            Form1.setState("Fetching artifacts...");
+                            PROTATool.setState("Fetching artifacts...");
                             LogUtil.log("Commit has changed, fetching artifacts...");
                             CommitInfo c = await GitUtils.fetchCommitInfo(owner, repo,
                                 youngestSha, pullRequestNumber.ToString());
@@ -146,7 +146,7 @@ namespace PROTATool
                 MessageBox.Show("Invalid PR link format. Please enter a valid link, e.g., https://github.com/owner/repo/pull/1234.", "Invalid Input");
             }
 
-            Form1.setState("Done...");
+            PROTATool.setState("Done...");
             bBusy = false;
             LogUtil.log("Exiting refresh commits.");
         }
@@ -171,7 +171,7 @@ namespace PROTATool
         }
         private async Task sendToDevice(CommitInfo c, string ip)
         {
-            Form1.setState("Sending OTA to " + ip + "...");
+            PROTATool.setState("Sending OTA to " + ip + "...");
             LogUtil.log("Starting OTA  " + ip + "process...");
             string prefix = "OpenBK7231T_";
             string ext = "rbl";
@@ -282,8 +282,8 @@ namespace PROTATool
                 Singleton.labelState.Text = "State: " + s;
             }
         }
-        static Form1 Singleton;
-        private void Form1_Load(object sender, EventArgs e)
+        static PROTATool Singleton;
+        private void PROTATool_Load(object sender, EventArgs e)
         {
             settings = Settings.Load();
             settings.BindTextBox(textBoxPassword, "ApiKey");
