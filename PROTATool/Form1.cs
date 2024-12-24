@@ -171,13 +171,10 @@ namespace PROTATool
         }
         private async Task sendToDevice(CommitInfo c, string ip)
         {
-<<<<<<< HEAD
+
             PROTATool.setState("Sending OTA to " + ip + "...");
             LogUtil.log("Starting OTA  " + ip + "process...");
-=======
-            Form1.setState("Sending OTA to " + ip + "...");
-            LogUtil.log("Starting OTA " + ip + " process...");
->>>>>>> 06f303688f1f7478be07f08510a0b90acde8fde8
+
             string prefix = "OpenBK7231T_";
             string ext = "rbl";
 
