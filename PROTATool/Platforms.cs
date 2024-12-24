@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.XPath;
 
 namespace PROTATool
 {
@@ -37,7 +38,8 @@ namespace PROTATool
             new Platform { name = "OpenLN882H", extension = "_OTA.bin" },
             new Platform { name = "OpenTR6260", extension = ".bin" },
             new Platform { name = "OpenW600", extension = ".img" },
-            new Platform { name = "OpenW800", extension = ".img" }
+            new Platform { name = "OpenW800", extension = ".img" },
+            new Platform { name = "OpenRTL87x0C", extension = "ota.img" }
             };
         }
 

@@ -19,10 +19,10 @@ using static PROTATool.GitUtils;
 
 namespace PROTATool
 {
-    public partial class Form1 : Form
+    public partial class PROTATool : Form
     {
         Settings settings;
-        public Form1()
+        public PROTATool()
         {
             InitializeComponent();
         }
@@ -55,7 +55,7 @@ namespace PROTATool
         }
         private async void RefreshCommits()
         {
-            Form1.setState("Entering...");
+            PROTATool.setState("Entering...");
             LogUtil.log("Entering refresh commits");
             string prLink = textBoxPR.Text;
 
@@ -72,7 +72,7 @@ namespace PROTATool
 
                 try
                 {
-                    Form1.setState("Getting commits...");
+                    PROTATool.setState("Getting commits...");
                     LogUtil.log($"Fetching commits for PR: {owner}/{repo}/pull/{pullRequestNumber}");
 
                     var client = new GitHubClient(new Octokit.ProductHeaderValue("PROTATool"));
@@ -117,7 +117,7 @@ namespace PROTATool
                         string youngestSha = youngestCommit.Sha;
                         if (prevTopCommit != youngestSha)
                         {
-                            Form1.setState("Fetching artifacts...");
+                            PROTATool.setState("Fetching artifacts...");
                             LogUtil.log("Commit has changed, fetching artifacts...");
                             CommitInfo c = await GitUtils.fetchCommitInfo(owner, repo,
                                 youngestSha, pullRequestNumber.ToString());
@@ -146,7 +146,7 @@ namespace PROTATool
                 MessageBox.Show("Invalid PR link format. Please enter a valid link, e.g., https://github.com/owner/repo/pull/1234.", "Invalid Input");
             }
 
-            Form1.setState("Done...");
+            PROTATool.setState("Done...");
             bBusy = false;
             LogUtil.log("Exiting refresh commits.");
         }
@@ -171,8 +171,10 @@ namespace PROTATool
         }
         private async Task sendToDevice(CommitInfo c, string ip)
         {
-            Form1.setState("Sending OTA to " + ip + "...");
+
+            PROTATool.setState("Sending OTA to " + ip + "...");
             LogUtil.log("Starting OTA  " + ip + "process...");
+
             string prefix = "OpenBK7231T_";
             string ext = "rbl";
 
@@ -194,79 +196,86 @@ namespace PROTATool
             prefix = p.name;
             LogUtil.log($"Chosen prefix: {prefix}");
             LogUtil.log($"Chosen ext: {ext}");
-            string path = c.artifacts[0].path;
+            LogUtil.log("Now will search for matching file in ZIPs");
+            bool bFoundFile = false;
+            for(int ai = 0; ai < c.artifacts.Count && bFoundFile==false; ai++) { 
+                string path = "";
+                path = c.artifacts[ai].path;
 
-            // open zip file
-            LogUtil.log($"Opening zip file: {path}");
-            using (ZipArchive zip = ZipFile.OpenRead(path))
+                // open zip file
+                LogUtil.log($"Checking zip file: {path}");
+                using (ZipArchive zip = ZipFile.OpenRead(path))
+                {
+                    // find matching file
+                    var fileEntry = zip.Entries.FirstOrDefault(e => e.FullName.StartsWith(prefix) && e.FullName.EndsWith(ext));
+
+                    if (fileEntry != null)
+                    {
+                        bFoundFile = true;
+                        LogUtil.log($"Found matching file: {fileEntry.FullName}");
+
+                        // read it to byte[]
+                        byte[] fileData;
+                        using (MemoryStream ms = new MemoryStream())
+                        {
+                            fileEntry.Open().CopyTo(ms);
+                            fileData = ms.ToArray();
+                        }
+
+                        // send data via POST to otaURL
+                        string otaURL = $"http://{ip}/api/ota";
+                        LogUtil.log($"Sending OTA data to {otaURL}");
+                        using (HttpClient client = new HttpClient())
+                        {
+                            var content = new ByteArrayContent(fileData);
+                            content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+
+                            try
+                            {
+                                HttpResponseMessage response = await client.PostAsync(otaURL, content);
+                                if (response.IsSuccessStatusCode)
+                                {
+                                    LogUtil.log("OTA update sent successfully.");
+                                }
+                                else
+                                {
+                                    LogUtil.log($"OTA update failed with status: {response.StatusCode}");
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                LogUtil.log($"Error sending OTA update: {ex.Message}");
+                            }
+
+                            // send empty post to rebootURL
+                            string rebootURL = $"http://{ip}/api/reboot";
+                            LogUtil.log($"Sending reboot request to {rebootURL}");
+                            try
+                            {
+                                HttpResponseMessage rebootResponse = await client.PostAsync(rebootURL, null);
+
+                                if (rebootResponse.IsSuccessStatusCode)
+                                {
+                                    LogUtil.log("Device rebooted successfully.");
+                                }
+                                else
+                                {
+                                    LogUtil.log($"Reboot failed with status: {rebootResponse.StatusCode}");
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                LogUtil.log($"Error sending reboot request: {ex.Message}");
+                            }
+                        }
+                    }
+                }
+            }
+            if (bFoundFile == false)
             {
-                // find matching file
-                var fileEntry = zip.Entries.FirstOrDefault(e => e.FullName.StartsWith(prefix) && e.FullName.EndsWith(ext));
-
-                if (fileEntry != null)
-                {
-                    LogUtil.log($"Found matching file: {fileEntry.FullName}");
-
-                    // read it to byte[]
-                    byte[] fileData;
-                    using (MemoryStream ms = new MemoryStream())
-                    {
-                        fileEntry.Open().CopyTo(ms);
-                        fileData = ms.ToArray();
-                    }
-
-                    // send data via POST to otaURL
-                    string otaURL = $"http://{ip}/api/ota";
-                    LogUtil.log($"Sending OTA data to {otaURL}");
-                    using (HttpClient client = new HttpClient())
-                    {
-                        var content = new ByteArrayContent(fileData);
-                        content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-
-                        try
-                        {
-                            HttpResponseMessage response = await client.PostAsync(otaURL, content);
-                            if (response.IsSuccessStatusCode)
-                            {
-                                LogUtil.log("OTA update sent successfully.");
-                            }
-                            else
-                            {
-                                LogUtil.log($"OTA update failed with status: {response.StatusCode}");
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            LogUtil.log($"Error sending OTA update: {ex.Message}");
-                        }
-
-                        // send empty post to rebootURL
-                        string rebootURL = $"http://{ip}/api/reboot";
-                        LogUtil.log($"Sending reboot request to {rebootURL}");
-                        try
-                        {
-                            HttpResponseMessage rebootResponse = await client.PostAsync(rebootURL, null);
-
-                            if (rebootResponse.IsSuccessStatusCode)
-                            {
-                                LogUtil.log("Device rebooted successfully.");
-                            }
-                            else
-                            {
-                                LogUtil.log($"Reboot failed with status: {rebootResponse.StatusCode}");
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            LogUtil.log($"Error sending reboot request: {ex.Message}");
-                        }
-                    }
-                }
-                else
-                {
-                    LogUtil.log("No matching file found in the zip archive.");
-                    MessageBox.Show("No matching file found in the zip archive.");
-                }
+                string msg = "No matching file found in the zip archive while looking for " + prefix + " " + ext + ".";
+                LogUtil.log(msg);
+                MessageBox.Show(msg);
             }
             LogUtil.log("OTA process completed.");
         }
@@ -282,8 +291,8 @@ namespace PROTATool
                 Singleton.labelState.Text = "State: " + s;
             }
         }
-        static Form1 Singleton;
-        private void Form1_Load(object sender, EventArgs e)
+        static PROTATool Singleton;
+        private void PROTATool_Load(object sender, EventArgs e)
         {
             settings = Settings.Load();
             settings.BindTextBox(textBoxPassword, "ApiKey");
