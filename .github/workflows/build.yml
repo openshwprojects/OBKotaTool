@@ -37,6 +37,7 @@ jobs:
           } else {
             Write-Error "PROTATool.exe.config is missing."
           }
+
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:

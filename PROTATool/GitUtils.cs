@@ -76,7 +76,7 @@ namespace PROTATool
                             continue;
                         if (run.Status == "in_progress")
                         {
-                            Form1.setState("Waiting for build to finish - " + run.Name + "");
+                            PROTATool.setState("Waiting for build to finish - " + run.Name + "");
                             LogUtil.log("Waiting for build to finish - " + run.Name + "");
                             await Task.Delay(5000);
                             break;
@@ -106,7 +106,7 @@ namespace PROTATool
                 }
                 else
                 {
-                    Form1.setState("Waiting for build");
+                    PROTATool.setState("Waiting for build");
                     LogUtil.log("Waiting for build");
                     await Task.Delay(5000);
                 }

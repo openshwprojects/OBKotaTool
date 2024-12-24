@@ -1,6 +1,6 @@
 namespace PROTATool
 {
-    partial class Form1
+    partial class PROTATool
     {
         /// <summary>
         /// Required designer variable.
@@ -140,7 +140,7 @@ namespace PROTATool
             this.textBoxPassword.Text = "??????????????";
             this.textBoxPassword.UseSystemPasswordChar = true;
             // 
-            // Form1
+            // PROTATool
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -156,9 +156,9 @@ namespace PROTATool
             this.Controls.Add(this.textBoxPR);
             this.Controls.Add(this.label1);
             this.Margin = new System.Windows.Forms.Padding(2);
-            this.Name = "Form1";
-            this.Text = "Form1";
-            this.Load += new System.EventHandler(this.Form1_Load);
+            this.Name = "PROTATool";
+            this.Text = "PROTATool";
+            this.Load += new System.EventHandler(this.PROTATool_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
