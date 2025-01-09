@@ -40,7 +40,7 @@ namespace PROTATool
             new Platform { name = "OpenW600", extension = ".img" },
             new Platform { name = "OpenW800", extension = ".img" },
             new Platform { name = "OpenRTL87X0C", extension = ".img" }
-            new Platform { name = "OpenRTL8710B". extension = ".img"}
+            new Platform { name = "OpenRTL8710B", extension = ".img" }
             };
         }
 
