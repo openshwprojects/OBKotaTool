@@ -153,6 +153,16 @@ namespace PROTATool
         private async Task sendToDevices(CommitInfo c)
         {
             string[] ips = textBoxIPs.Text.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries );
+            // fix IPs
+            for (int i = 0; i < ips.Length; i++)
+            {
+                ips[i] = ips[i].Trim().Replace("http://", "").Replace("https://", "");
+                int slashIndex = ips[i].IndexOf('/');
+                if (slashIndex >= 0)
+                {
+                    ips[i] = ips[i].Substring(0, slashIndex);
+                }
+            }
             LogUtil.log("Found " + ips.Length + " devices...");
             for (int i = 0; i < ips.Length; i++)
             {
@@ -173,17 +183,16 @@ namespace PROTATool
         {
 
             PROTATool.setState("Sending OTA to " + ip + "...");
-            LogUtil.log("Starting OTA  " + ip + "process...");
+            LogUtil.log("Starting OTA " + ip + " process...");
 
             string prefix = "OpenBK7231T_";
             string ext = "rbl";
 
             OBKDevice d = new OBKDevice();
             d.setAddress(ip);
-            OBKDevice.Root obk = await d.GetStatusAsync();
 
             string hardware = "";
-            hardware = obk.StatusFWR.Hardware;
+            hardware = await d.GetHardwareAsync();
 
 
             var p = Platforms.findForChip(hardware);
@@ -336,6 +345,18 @@ namespace PROTATool
         }
 
         private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            LogUtil.log($"User clicked button to reset last checked commit, rechecking");
+            prevTopCommit = "";
+            checkBoxFlashOnChange.Checked = true;
+        }
+
+        private void textBoxIPs_TextChanged(object sender, EventArgs e)
         {
 
         }
