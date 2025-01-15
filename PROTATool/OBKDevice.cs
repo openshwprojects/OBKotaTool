@@ -204,6 +204,39 @@ namespace PROTATool
         {
             return await SendGetInternalJSONAsync<Root>("cm?cmnd=STATUS");
         }
+
+        public async Task<OBKInfo> GetOBKInfoAsync()
+        {
+            return await SendGetInternalJSONAsync<OBKInfo>("api/info");
+        }
+        public async Task<string> GetHardwareAsync()
+        {
+            try
+            {
+                var root = await GetStatusAsync();
+                if (root?.StatusFWR?.Hardware != null)
+                {
+                    return root.StatusFWR.Hardware;
+                }
+            }
+            catch(Exception ex)
+            {
+            }
+            try
+            {
+                var obkInfo = await GetOBKInfoAsync();
+                if (obkInfo?.chipset != null)
+                {
+                    return obkInfo.chipset;
+                }
+            }
+            catch (Exception)
+            {
+                // Optionally log the exception if needed
+            }
+
+            return "Unknown"; // Default value if both attempts fail
+        }
         public async Task<T> SendGetInternalJSONAsync<T>(string path)
         {
             byte[] responseBytes = await SendGetInternalAsync(path);
@@ -217,6 +250,22 @@ namespace PROTATool
             string s = responseBytes != null ? Encoding.ASCII.GetString(responseBytes) : null;
             Console.Write(s);
             return s;
+        }
+        public class OBKInfo
+        {
+            public int uptime_s { get; set; }
+            public string build { get; set; }
+            public string ip { get; set; }
+            public string mac { get; set; }
+            public string flags { get; set; }
+            public string mqtthost { get; set; }
+            public string mqtttopic { get; set; }
+            public string chipset { get; set; }
+            public string webapp { get; set; }
+            public string shortName { get; set; }
+            public string startcmd { get; set; }
+            public int supportsSSDP { get; set; }
+            public bool supportsClientDeviceDB { get; set; }
         }
 
         public async Task<byte[]> SendGetInternalAsync(string path)
