@@ -21,6 +21,7 @@ namespace PROTATool
             {
             new Platform { name = "OpenBK7231N", extension = ".rbl" },
             new Platform { name = "OpenBK7231T", extension = ".rbl" },
+            new Platform { name = "OpenBK7238", extension = ".rbl" },
             //new Platform { name = "OpenBL602", extension = ".bin.xz" },
             new Platform { name = "OpenBL602", extension = ".bin.xz.ota" },
            // new Platform { name = "OpenESP32C2", extension = ".factory.bin" },
