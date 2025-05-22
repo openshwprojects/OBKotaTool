@@ -47,11 +47,13 @@ namespace PROTATool
 
         internal static Platform findForChip(string hardware)
         {
-            hardware = hardware.Trim().Replace("!", "").ToLower();
+            string hwClean = hardware.Trim().ToUpper().Replace("!", "");
         
             foreach (var platform in list)
             {
-                if (platform.name.ToLower().EndsWith(hardware))
+                string platformSuffix = platform.name.Replace("Open", "").ToUpper();
+        
+                if (platformSuffix == hwClean)
                 {
                     return platform;
                 }
