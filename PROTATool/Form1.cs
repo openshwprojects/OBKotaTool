@@ -195,6 +195,7 @@ namespace PROTATool
             hardware = await d.GetHardwareAsync();
 
 
+            LogUtil.log("Device reported hardware: " + hardware+"!");
             var p = Platforms.findForChip(hardware);
             if(p == null)
             {
@@ -233,48 +234,63 @@ namespace PROTATool
 
                         // send data via POST to otaURL
                         string otaURL = $"http://{ip}/api/ota";
-                        LogUtil.log($"Sending OTA data to {otaURL}");
-                        using (HttpClient client = new HttpClient())
+                        for (int tr = 0; tr < 5; tr++)
                         {
-                            var content = new ByteArrayContent(fileData);
-                            content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-
-                            try
+                            LogUtil.log($"Sending OTA data to {otaURL} attempt {tr}");
+                            using (HttpClient client = new HttpClient())
                             {
-                                HttpResponseMessage response = await client.PostAsync(otaURL, content);
-                                if (response.IsSuccessStatusCode)
-                                {
-                                    LogUtil.log("OTA update sent successfully.");
-                                }
-                                else
-                                {
-                                    LogUtil.log($"OTA update failed with status: {response.StatusCode}");
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                LogUtil.log($"Error sending OTA update: {ex.Message}");
-                            }
+                                var content = new ByteArrayContent(fileData);
+                                content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
 
+                                try
+                                {
+                                    LogUtil.log($"PostAsync ");
+                                    HttpResponseMessage response = await client.PostAsync(otaURL, content);
+                                    if (response.IsSuccessStatusCode)
+                                    {
+                                        LogUtil.log("OTA update sent successfully.");
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        LogUtil.log($"OTA update failed with status: {response.StatusCode}");
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    LogUtil.log($"Error sending OTA update: {ex.Message}");
+                                    if (ex.InnerException != null)
+                                        LogUtil.log($"Inner exception: {ex.InnerException.Message}");
+                                    LogUtil.log($"Stack trace: {ex.StackTrace}");
+                                }
+                                await Task.Delay(1000); // non-blocking sleep
+                            }
+                        }
+                        for (int tr = 0; tr < 5; tr++)
+                        {
                             // send empty post to rebootURL
                             string rebootURL = $"http://{ip}/api/reboot";
-                            LogUtil.log($"Sending reboot request to {rebootURL}");
-                            try
+                            LogUtil.log($"Sending reboot request to {rebootURL} attempt {tr}");
+                            using (HttpClient client = new HttpClient())
                             {
-                                HttpResponseMessage rebootResponse = await client.PostAsync(rebootURL, null);
+                                try
+                                {
+                                    HttpResponseMessage rebootResponse = await client.PostAsync(rebootURL, null);
 
-                                if (rebootResponse.IsSuccessStatusCode)
-                                {
-                                    LogUtil.log("Device rebooted successfully.");
+                                    if (rebootResponse.IsSuccessStatusCode)
+                                    {
+                                        LogUtil.log("Device rebooted successfully.");
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        LogUtil.log($"Reboot failed with status: {rebootResponse.StatusCode}");
+                                    }
                                 }
-                                else
+                                catch (Exception ex)
                                 {
-                                    LogUtil.log($"Reboot failed with status: {rebootResponse.StatusCode}");
+                                    LogUtil.log($"Error sending reboot request: {ex.Message}");
                                 }
-                            }
-                            catch (Exception ex)
-                            {
-                                LogUtil.log($"Error sending reboot request: {ex.Message}");
                             }
                         }
                     }

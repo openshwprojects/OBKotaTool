@@ -47,7 +47,18 @@ namespace PROTATool
 
         internal static Platform findForChip(string hardware)
         {
-            for(int i = 0; i < list.Length; i++)
+            for (int i = 0; i < list.Length; i++)
+            {
+                if (list[i].name.ToLower() == (hardware.ToLower()))
+                {
+                    return list[i];
+                }
+                if (list[i].name.ToLower() == (("Open" + hardware).ToLower()))
+                {
+                    return list[i];
+                }
+            }
+            for (int i = 0; i < list.Length; i++)
             {
                 if (list[i].name.ToLower().Contains(hardware.ToLower()))
                 {
