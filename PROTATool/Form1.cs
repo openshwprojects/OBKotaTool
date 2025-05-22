@@ -217,8 +217,12 @@ namespace PROTATool
                 using (ZipArchive zip = ZipFile.OpenRead(path))
                 {
                     // find matching file
-                    var fileEntry = zip.Entries.FirstOrDefault(e => e.FullName.StartsWith(prefix) && e.FullName.EndsWith(ext));
-
+                    string sufix = prefix + ext;
+                    var fileEntry = zip.Entries.FirstOrDefault(e => e.FullName.EndsWith(prefix));
+                    if(fileEntry == null)
+                    {
+                        fileEntry = zip.Entries.FirstOrDefault(e => e.FullName.StartsWith(prefix+"_") && e.FullName.EndsWith(ext));
+                    }
                     if (fileEntry != null)
                     {
                         bFoundFile = true;
