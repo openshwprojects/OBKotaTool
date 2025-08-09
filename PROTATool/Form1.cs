@@ -179,6 +179,15 @@ namespace PROTATool
             }
 
         }
+        int CountUnderscores(string str)
+        {
+            int count = 0;
+            for (int i = 0; i < str.Length; i++)
+            {
+                if (str[i] == '_') count++;
+            }
+            return count;
+        }
         private async Task sendToDevice(CommitInfo c, string ip)
         {
 
@@ -193,6 +202,11 @@ namespace PROTATool
 
             string hardware = "";
             hardware = await d.GetHardwareAsync();
+            if (hardware == null)
+            {
+                MessageBox.Show("Failed to HTTP GET hardware from " + ip);
+                return;
+            }
 
 
             LogUtil.log("Device reported hardware: " + hardware+"!");
@@ -206,6 +220,24 @@ namespace PROTATool
             prefix = p.name;
             LogUtil.log($"Chosen prefix: {prefix}");
             LogUtil.log($"Chosen ext: {ext}");
+            LogUtil.log($"Available files");
+            // Custom comparer
+            c.artifacts.Sort(new Comparison<GitUtils.CArtifact>(
+                delegate (GitUtils.CArtifact a, GitUtils.CArtifact b)
+                {
+                    int ua = CountUnderscores(a.path);
+                    int ub = CountUnderscores(b.path);
+                    if (ua != ub) return ua - ub;
+                    return string.Compare(a.path, b.path);
+                }));
+
+
+            for (int ai = 0; ai < c.artifacts.Count; ai++)
+            {
+                string path = "";
+                path = c.artifacts[ai].path;
+                LogUtil.log($"Zip file: {path}");
+            }
             LogUtil.log("Now will search for matching file in ZIPs");
             bool bFoundFile = false;
             for(int ai = 0; ai < c.artifacts.Count && bFoundFile==false; ai++) { 
@@ -235,6 +267,7 @@ namespace PROTATool
                             fileEntry.Open().CopyTo(ms);
                             fileData = ms.ToArray();
                         }
+                        LogUtil.log($"File len is: {fileData.Length}");
 
                         // send data via POST to otaURL
                         string otaURL = $"http://{ip}/api/ota";

@@ -235,7 +235,7 @@ namespace PROTATool
                 // Optionally log the exception if needed
             }
 
-            return "Unknown"; // Default value if both attempts fail
+            return null; // Default value if both attempts fail
         }
         public async Task<T> SendGetInternalJSONAsync<T>(string path)
         {
